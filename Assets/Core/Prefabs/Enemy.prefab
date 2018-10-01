@@ -98,6 +98,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   startingHealth: 5
+  deathEffect: {fileID: 198753586018358096, guid: 536e62e93349c4448b083ae8aaea306a,
+    type: 2}
 --- !u!136 &136680278460153400
 CapsuleCollider:
   m_ObjectHideFlags: 1

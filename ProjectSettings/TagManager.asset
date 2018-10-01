@@ -15,9 +15,9 @@ TagManager:
   - 
   - PostProcessing
   - Enemy
-  - 
-  - 
-  - 
+  - Floor
+  - Obstacle
+  - Shell
   - 
   - 
   - 

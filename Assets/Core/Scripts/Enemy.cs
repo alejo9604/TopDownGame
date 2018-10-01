@@ -10,6 +10,8 @@ public class Enemy : LeavingEntity
     public enum State { Idle, Chasing, Attacking };
     State currentState;
 
+    public ParticleSystem deathEffect;
+
     NavMeshAgent pathFinder;
     LeavingEntity targetEntity;
     Transform target;
@@ -49,6 +51,15 @@ public class Enemy : LeavingEntity
         skinMaterial = GetComponent<Renderer>().material;
         originalColor = skinMaterial.color;
 
+    }
+
+    public override void TakeHit(float damage, Vector3 hitPoint, Vector3 hitDirection)
+    {
+        if(damage >= health)
+        {
+            Destroy( Instantiate(deathEffect.gameObject, hitPoint, Quaternion.FromToRotation(Vector3.forward, hitDirection)) as GameObject, deathEffect.startLifetime);
+        }
+        base.TakeHit(damage, hitPoint, hitDirection);
     }
 
     void OnTargetDeath()

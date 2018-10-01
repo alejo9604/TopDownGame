@@ -17,12 +17,21 @@ public class LeavingEntity : MonoBehaviour, IDamageable
         health = startingHealth;
     }
 
-    public void TakeHit(float damage, RaycastHit hit)
+    public virtual void TakeHit(float damage, Vector3 hitPoint, Vector3 hitDirection)
     {
         //Do some stuff here with hit var
         TakeDamage(damage);
     }
 
+    public virtual void TakeDamage(float damage)
+    {
+        health -= damage;
+
+        if (health <= 0 && !dead)
+            Died();
+    }
+
+    [ContextMenu("Self Destruct")]
     protected void Died()
     {
         dead = true;
@@ -31,11 +40,5 @@ public class LeavingEntity : MonoBehaviour, IDamageable
         Destroy(gameObject);
     }
 
-    public void TakeDamage(float damage)
-    {
-        health -= damage;
-
-        if (health <= 0 && !dead)
-            Died();
-    }
+    
 }
