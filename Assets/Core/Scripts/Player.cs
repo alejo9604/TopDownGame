@@ -9,6 +9,8 @@ public class Player : LeavingEntity
 
     public float moveSpeed = 5f;
 
+    public Crosshairs crosshair;
+
     Camera viewCamera;
     PlayerController controller;
     GunController gunController;
@@ -29,7 +31,7 @@ public class Player : LeavingEntity
 
         //Look input
         Ray ray = viewCamera.ScreenPointToRay(Input.mousePosition);
-        Plane groundPlane = new Plane(Vector3.up, Vector3.zero);
+        Plane groundPlane = new Plane(Vector3.up, Vector3.up * gunController.GunHeight);
         float rayDistance;
 
         if(groundPlane.Raycast(ray, out rayDistance))
@@ -37,6 +39,12 @@ public class Player : LeavingEntity
             //Intersection
             Vector3 point = ray.GetPoint(rayDistance);
             controller.LookAt(point);
+            crosshair.transform.position = point;
+            crosshair.DetectTarget(ray);
+
+            if((new Vector2(point.x, point.z) - new Vector2(transform.position.x, transform.position.z)).sqrMagnitude > 1)
+                gunController.Aim(point);
+           
         }
 
         //Weapon input
@@ -48,5 +56,9 @@ public class Player : LeavingEntity
         {
             gunController.OnTriggerRelease();
         }
-	}
+        if (Input.GetKeyDown(KeyCode.R))
+        {
+            gunController.Reload();
+        }
+    }
 }

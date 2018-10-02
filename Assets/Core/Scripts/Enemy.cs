@@ -28,29 +28,51 @@ public class Enemy : LeavingEntity
     float targetCollisionRadius;
 
     bool hasTarget;
-	
-	protected override void Start () {
-        base.Start();
+
+    private void Awake()
+    {
         pathFinder = GetComponent<NavMeshAgent>();
 
         if (GameObject.FindGameObjectWithTag("Player") != null)
         {
-            currentState = State.Chasing;
             hasTarget = true;
 
             target = GameObject.FindGameObjectWithTag("Player").transform;
             targetEntity = target.GetComponent<LeavingEntity>();
-            targetEntity.OnDeath += OnTargetDeath;
+
 
             myCollisionRadius = GetComponent<CapsuleCollider>().radius;
             targetCollisionRadius = target.GetComponent<CapsuleCollider>().radius;
 
+        }
+    }
+
+    protected override void Start () {
+        base.Start();
+
+        if (hasTarget)
+        {
+            currentState = State.Chasing;
+            targetEntity.OnDeath += OnTargetDeath;
             StartCoroutine(UpdatePath());
         }
+       
+
+    }
+
+    public void SetCharacteristics(float moveSpeed, int hitsToKillPlayer, float enemyHealth, Color skincolor)
+    {
+        pathFinder.speed = moveSpeed;
+
+        if (hasTarget)
+        {
+            damage = Mathf.Ceil( targetEntity.startingHealth / hitsToKillPlayer );
+        }
+        startingHealth = enemyHealth;
 
         skinMaterial = GetComponent<Renderer>().material;
+        skinMaterial.color = skincolor;
         originalColor = skinMaterial.color;
-
     }
 
     public override void TakeHit(float damage, Vector3 hitPoint, Vector3 hitDirection)
