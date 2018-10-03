@@ -70,7 +70,7 @@ public class Enemy : LeavingEntity
         }
         startingHealth = enemyHealth;
 
-        skinMaterial = GetComponent<Renderer>().material;
+        skinMaterial = GetComponent<Renderer>().sharedMaterial;
         skinMaterial.color = skincolor;
         originalColor = skinMaterial.color;
     }

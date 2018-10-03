@@ -7,8 +7,20 @@ public class GameUI : MonoBehaviour {
 
     public Image fadePlane;
     public GameObject gameOverUI;
-	
-	void Start () {
+
+    public RectTransform newWavebanner;
+    public Text newWaveTitle;
+    public Text newWaveEnemyCount;
+
+    Spawner spawner;
+
+    private void Awake()
+    {
+        spawner = FindObjectOfType<Spawner>();
+        spawner.OnNewWay += OnNewWave;
+    }
+
+    void Start () {
 
         FindObjectOfType<Player>().OnDeath += GameOver;
 
@@ -18,7 +30,47 @@ public class GameUI : MonoBehaviour {
     {
         StartCoroutine(Fade(Color.clear, Color.black, 1));
         gameOverUI.SetActive(true);
+
     }
+
+    void OnNewWave(int waveNumber)
+    {
+        string[] numbers = { "one", "two", "three", "four", "five" };
+        newWaveTitle.text = "- Wave " + numbers[waveNumber - 1] + " -";
+        string enemyCountString = spawner.waves[waveNumber - 1].infinite ? "Infinite" : spawner.waves[waveNumber - 1].enemyCount + "";
+        newWaveEnemyCount.text = "Enemies: " + enemyCountString;
+
+        StopCoroutine("AnimateNewWaveBanner");
+        StartCoroutine("AnimateNewWaveBanner");
+    }
+
+    IEnumerator AnimateNewWaveBanner()
+    {
+        float percent = 0;
+        float speed = 3f;
+        float delayTime = 1.5f;
+        int dir = 1;
+
+        float endDelayTime = Time.time + 1 / speed + delayTime;
+
+        while( percent >= 0)
+        {
+            percent += Time.deltaTime * speed * dir;
+
+            if(percent >= 1)
+            {
+                percent = 1;
+                if(Time.time > endDelayTime)
+                {
+                    dir = -1;
+                }
+            }
+
+            newWavebanner.anchoredPosition = Vector2.up * Mathf.Lerp(-170, 45, percent);
+            yield return null;
+        }
+    }
+
 
     IEnumerator Fade(Color from, Color to, float time)
     {

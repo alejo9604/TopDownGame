@@ -15,13 +15,23 @@ public class Player : LeavingEntity
     PlayerController controller;
     GunController gunController;
 
-    protected override void Start () {
-        base.Start();
+    private void Awake()
+    {
         viewCamera = Camera.main;
         controller = GetComponent<PlayerController>();
-        gunController = GetComponent <GunController>();
+        gunController = GetComponent<GunController>();
+        FindObjectOfType<Spawner>().OnNewWay += OnNewWave;
+    }
+
+    protected override void Start () {
+        base.Start();
 	}
 
+    void OnNewWave(int waveNumber)
+    {
+        health = startingHealth;
+        gunController.EquipedGun(waveNumber - 1);
+    }
 
     void Update() {
         //Movement input
