@@ -11,8 +11,12 @@ public class GameUI : MonoBehaviour {
     public RectTransform newWavebanner;
     public Text newWaveTitle;
     public Text newWaveEnemyCount;
+    public Text scoreUI;
+    public Text gameoverScoreUI;
+    public RectTransform healthBar;
 
     Spawner spawner;
+    Player player;
 
     private void Awake()
     {
@@ -22,15 +26,28 @@ public class GameUI : MonoBehaviour {
 
     void Start () {
 
-        FindObjectOfType<Player>().OnDeath += GameOver;
+        player = FindObjectOfType<Player>();
+        player.OnDeath += GameOver;
 
 	}
-	
-	void GameOver()
-    {
-        StartCoroutine(Fade(Color.clear, Color.black, 1));
-        gameOverUI.SetActive(true);
 
+    private void Update()
+    {
+        scoreUI.text = ScoreKeeper.score.ToString("D6");
+        float healthPercent = 0;
+        if (player != null)
+            healthPercent = player.health / player.startingHealth;
+        healthBar.localScale = new Vector3(healthPercent, 1, 1);
+    }
+
+    void GameOver()
+    {
+        Cursor.visible = true;
+        StartCoroutine(Fade(Color.clear, Color.black, 1));
+        gameoverScoreUI.text = scoreUI.text;
+        scoreUI.gameObject.SetActive(false);
+        healthBar.transform.parent.gameObject.SetActive(false);
+        gameOverUI.SetActive(true);
     }
 
     void OnNewWave(int waveNumber)
@@ -90,5 +107,10 @@ public class GameUI : MonoBehaviour {
     public void StartNewGame()
     {
         SceneManager.LoadScene("Game");
+    }
+
+    public void ReturnToMainMenu()
+    {
+        SceneManager.LoadScene("Menu");
     }
 }

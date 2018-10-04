@@ -6,7 +6,7 @@ public class LeavingEntity : MonoBehaviour, IDamageable
 {
 
     public float startingHealth;
-    protected float health;
+    public float health { get; protected set; }
     protected bool dead;
 
     public event System.Action OnDeath;
@@ -32,7 +32,7 @@ public class LeavingEntity : MonoBehaviour, IDamageable
     }
 
     [ContextMenu("Self Destruct")]
-    protected void Died()
+    public virtual void Died()
     {
         dead = true;
         if (OnDeath != null)

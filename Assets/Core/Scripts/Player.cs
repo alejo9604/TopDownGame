@@ -70,5 +70,15 @@ public class Player : LeavingEntity
         {
             gunController.Reload();
         }
+
+        if (transform.position.y < -10)
+            TakeDamage(health);
+    }
+
+
+    public override void Died()
+    {
+        AudioManager.instance.PlaySound("PlayerDeath", transform.position);
+        base.Died();
     }
 }

@@ -11,6 +11,7 @@ public class Enemy : LeavingEntity
     State currentState;
 
     public ParticleSystem deathEffect;
+    public static event System.Action OnDeathStatic;
 
     NavMeshAgent pathFinder;
     LeavingEntity targetEntity;
@@ -70,15 +71,22 @@ public class Enemy : LeavingEntity
         }
         startingHealth = enemyHealth;
 
-        skinMaterial = GetComponent<Renderer>().sharedMaterial;
+        deathEffect.startColor = new Color(skincolor.r, skincolor.g, skincolor.b, 1);
+
+        skinMaterial = GetComponent<Renderer>().material;
         skinMaterial.color = skincolor;
         originalColor = skinMaterial.color;
     }
 
     public override void TakeHit(float damage, Vector3 hitPoint, Vector3 hitDirection)
     {
+        AudioManager.instance.PlaySound("Impact", transform.position);
         if(damage >= health)
         {
+
+            if (OnDeathStatic != null) OnDeathStatic();
+
+            AudioManager.instance.PlaySound("EnemyDeath", transform.position);
             Destroy( Instantiate(deathEffect.gameObject, hitPoint, Quaternion.FromToRotation(Vector3.forward, hitDirection)) as GameObject, deathEffect.startLifetime);
         }
         base.TakeHit(damage, hitPoint, hitDirection);
@@ -100,8 +108,10 @@ public class Enemy : LeavingEntity
             if (sqrDstToTarget < (threshold * threshold))
             {
                 nextAttackTime = Time.time + timeBetweenAttacks;
-                StartCoroutine(Attack());
 
+                AudioManager.instance.PlaySound("EnemyAttack", transform.position);
+
+                StartCoroutine(Attack());
             }
         }
         
